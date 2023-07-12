@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Data;
+using OnlineShop.Interface;
+using OnlineShop.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.AddDbContext<OnlineShopContext>(options =>
 {
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
 });
+
+builder.Services.AddScoped<ICategory, CategoryService>();
 
 var app = builder.Build();
 

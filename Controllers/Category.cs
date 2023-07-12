@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineShop.Data;
 using OnlineShop.Dto;
+using OnlineShop.Interface;
 
 namespace OnlineShop.Controllers
 {
@@ -8,16 +8,17 @@ namespace OnlineShop.Controllers
     [ApiController]
     public class Category : ControllerBase
     {
-        private readonly OnlineShopContext _onlineShopContext;
-        public Category(OnlineShopContext onlineShopContext)
+        private readonly ICategory _categoryRepo;
+
+        public Category(ICategory categoryRepo)
         {
-            _onlineShopContext = onlineShopContext;
+            _categoryRepo = categoryRepo;
         }
 
         [HttpPost("create")]
         public IActionResult CreateCategory([FromQuery] CategoryDto categoryDto)
         {
-            var cekNamaKategori = _onlineShopContext.Categories.Where(c => c.CategoryName.ToLower() == categoryDto.CategoryName.ToLower()).FirstOrDefault();
+            var cekNamaKategori = _categoryRepo.GetAllCategories().Where(c => c.CategoryName  .ToLower() == categoryDto.CategoryName.ToLower()).FirstOrDefault();
 
             if (cekNamaKategori != null) return BadRequest("Nama Kategori Sudah Terdaftar");
 
@@ -26,23 +27,20 @@ namespace OnlineShop.Controllers
                 CategoryName = categoryDto.CategoryName
             };
 
-            _onlineShopContext.Categories.Add(newCategory);
-            _onlineShopContext.SaveChanges();
-
+            _categoryRepo.CreateCategory(newCategory);
             return Ok("Create Success");
         }
 
         [HttpGet]
         public IActionResult GetAllCategories()
         {
-            return Ok(_onlineShopContext.Categories.ToList());
+            return Ok(_categoryRepo.GetAllCategories());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetCategoryById(int id)
         {
-            var categoryId = _onlineShopContext.Categories.Where(c => c.Id == id).FirstOrDefault();
-
+            var categoryId = _categoryRepo.GetCategoryById(id);
             if (categoryId == null) return BadRequest("Id Tidak di Temukan!!");
 
             return Ok(categoryId);
@@ -51,28 +49,25 @@ namespace OnlineShop.Controllers
         [HttpPut("update")]
         public IActionResult UpdadteCategory(int id, CategoryDto categoryDto)
         {
-            var categoryId = _onlineShopContext.Categories.Where(c => c.Id == id).FirstOrDefault();
+            var categoryId = _categoryRepo.GetCategoryById(id);
 
             if (categoryId == null) return BadRequest("Id Tidak di Temukan!!");
             
             //update nama kategori berdasarkan id yang kita input, jika id cocok
             categoryId.CategoryName = categoryDto.CategoryName;
 
-            _onlineShopContext.Categories.Update(categoryId);
-            _onlineShopContext.SaveChanges();
-
+            _categoryRepo.UpdateCategory(categoryId);
             return Ok("Update Success");
         }
 
         [HttpDelete]
         public IActionResult DeleteCategory(int id)
         {
-            var categoryId = _onlineShopContext.Categories.Where(c => c.Id == id).FirstOrDefault();
+            var categoryId = _categoryRepo.GetCategoryById(id);
 
             if (categoryId == null) return BadRequest("Id Tidak di Temukan!!");
 
-            _onlineShopContext.Categories.Remove(categoryId);
-            _onlineShopContext.SaveChanges();
+            _categoryRepo.DeleteCategory(id);
 
             return Ok("Berhasil Hapus");
         }
