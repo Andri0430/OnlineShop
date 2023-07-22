@@ -8,9 +8,9 @@ namespace OnlineShop.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public double Price { get; set; }
-        public int Stock { get; set; }
+        public string Nama { get; set; } = string.Empty;
+        public string Gambar { get; set; } = string.Empty;
+        public double Harga { get; set; }
         public Category Category { get; set; }
     }
 }

@@ -7,8 +7,6 @@ namespace OnlineShop.Service
     public class CategoryService : ICategory
     {
         private readonly OnlineShopContext _context;
-
-        //Constructor
         public CategoryService(OnlineShopContext context)
         {
             _context = context;

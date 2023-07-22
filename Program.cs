@@ -18,6 +18,8 @@ builder.Services.AddDbContext<OnlineShopContext>(options =>
 });
 
 builder.Services.AddScoped<ICategory, CategoryService>();
+builder.Services.AddScoped<IProduct, ProductService>();
+builder.Services.AddScoped<IDetailProduct, DetailProductService>();
 
 var app = builder.Build();
 

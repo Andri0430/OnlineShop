@@ -49,26 +49,36 @@ namespace OnlineShop.Controllers
         [HttpPut("update")]
         public IActionResult UpdadteCategory(int id, CategoryDto categoryDto)
         {
+            var categoryName = _categoryRepo.GetAllCategories().Where(c => c.CategoryName == categoryDto.CategoryName).FirstOrDefault();
             var categoryId = _categoryRepo.GetCategoryById(id);
 
-            if (categoryId == null) return BadRequest("Id Tidak di Temukan!!");
-            
-            //update nama kategori berdasarkan id yang kita input, jika id cocok
-            categoryId.CategoryName = categoryDto.CategoryName;
+            if(categoryId == null)
+            {
+                return BadRequest("Id Kategori Tidak ditemukan!!!");
+            }
+            else
+            {
+                if (categoryId.CategoryName != categoryDto.CategoryName && categoryName != null)
+                {
+                    return BadRequest("Nama Kategori sudah ada!!!");
+                }
+                categoryId.CategoryName = categoryDto.CategoryName;
+                _categoryRepo.UpdateCategory(categoryId);
 
-            _categoryRepo.UpdateCategory(categoryId);
-            return Ok("Update Success");
+                return Ok("Update Kategori Berhasil!!!");
+            }
         }
 
         [HttpDelete]
         public IActionResult DeleteCategory(int id)
         {
             var categoryId = _categoryRepo.GetCategoryById(id);
-
-            if (categoryId == null) return BadRequest("Id Tidak di Temukan!!");
+            if (categoryId == null)
+            {
+                BadRequest("Id Tidak di Temukan!!");
+            }
 
             _categoryRepo.DeleteCategory(id);
-
             return Ok("Berhasil Hapus");
         }
     }
